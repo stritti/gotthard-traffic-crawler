@@ -1,33 +1,59 @@
 import { log } from 'crawlee';
-import cron from 'node-cron';
 import { scrapeGotthard, initCsv } from './crawler.js';
+
+const BASE_INTERVAL_MS = 15 * 60 * 1000; // 15 Minuten
+const PENALTY_MS = 5 * 60 * 1000; // +5 Minuten pro Fehlschlag
+const MAX_INTERVAL_MS = 60 * 60 * 1000; // Maximal 60 Minuten
 
 // CSV initialisieren (einmalig beim Start)
 initCsv();
 
 /**
- * Einmaligen Crawl durchführen und Ergebnis loggen.
+ * Einmaligen Crawl durchführen.
+ * Wirft bei Fehlschlag → wird vom Scheduler abgefangen und gezählt.
  */
-async function runOnce() {
-    try {
-        const data = await scrapeGotthard();
+async function runOnce(): Promise<void> {
+    const data = await scrapeGotthard();
+    log.info(
+        `Ergebnis: Nord ${data.nordportal_km} km / ${data.nordportal_min} min | ` +
+            `Süd ${data.suedportal_km} km / ${data.suedportal_min} min`,
+    );
+}
+
+/**
+ * Dynamischer Scheduler: Start → warten → wiederholen.
+ * Intervall verlängert sich bei Fehlschlägen um je 5 Minuten (max 60min).
+ * Setzt sich bei Erfolg zurück auf 15 Minuten.
+ */
+async function runForever(): Promise<void> {
+    let failures = 0;
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+        try {
+            await runOnce();
+            failures = 0; // Erfolg → Zähler zurücksetzen
+        } catch (e: any) {
+            failures++;
+            log.error(`❌ Crawl #${failures} fehlgeschlagen: ${e.message}`);
+        }
+
+        const intervalMs = Math.min(BASE_INTERVAL_MS + failures * PENALTY_MS, MAX_INTERVAL_MS);
+        const intervalMin = intervalMs / 60000;
+
         log.info(
-            `Ergebnis: Nord ${data.nordportal_km} km / ${data.nordportal_min} min | ` +
-                `Süd ${data.suedportal_km} km / ${data.suedportal_min} min`,
+            failures === 0
+                ? `⏳ Nächster Crawl in ${intervalMin} Minuten...`
+                : `⏳ Nächster Versuch in ${intervalMin} Minuten (${failures} Fehler seit letztem Erfolg)`,
         );
-    } catch (e: any) {
-        log.error(`Crawl fehlgeschlagen: ${e.message}`);
+
+        await new Promise((resolve) => setTimeout(resolve, intervalMs));
     }
 }
 
-// 1. Initialer Start
-runOnce();
-
-// 2. Cronjob alle 15 Minuten
-cron.schedule('*/15 * * * *', () => {
-    log.info('----------------------------------------');
-    log.info('Cronjob ausgelöst: Starte planmäßigen Crawl...');
-    runOnce();
+// Start
+log.info('🚀 CLI-Crawler gestartet (dynamisches Intervall, Basis 15min).');
+runForever().catch((e) => {
+    log.error(`💥 Scheduler abgestürzt: ${e.message}`);
+    process.exit(1);
 });
-
-log.info('✅ CLI-Crawler gestartet. Cronjob für alle 15 Minuten eingerichtet.');
