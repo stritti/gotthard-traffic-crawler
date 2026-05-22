@@ -1,0 +1,61 @@
+{
+    "name": "gotthard-traffic-crawler",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "description": "Web scraper für Gotthard-Traffic-Daten (Staulängen in km, Wartezeiten in min) mit Camoufox-Cloudflare-Umgehung. CLI + HTTP-Server (n8n-kompatibel).",
+    "keywords": [
+        "gotthard",
+        "traffic",
+        "crawler",
+        "camoufox",
+        "cloudflare",
+        "scraper",
+        "n8n"
+    ],
+    "homepage": "https://github.com/ssrb/gotthard-traffic-crawler",
+    "bugs": {
+        "url": "https://github.com/ssrb/gotthard-traffic-crawler/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ssrb/gotthard-traffic-crawler.git"
+    },
+    "dependencies": {
+        "@crawlee/impit-client": "^3.0.0",
+        "camoufox-js": "^0.9.0",
+        "crawlee": "^3.0.0",
+        "express": "^5.2.1",
+        "node-cron": "^4.2.1",
+        "playwright": "1.58.2"
+    },
+    "devDependencies": {
+        "@apify/tsconfig": "^0.1.0",
+        "@semantic-release/github": "^11.0.0",
+        "@types/express": "^5.0.6",
+        "@types/fs-extra": "^11",
+        "@types/node": "^24.0.0",
+        "@types/node-cron": "^3.0.11",
+        "fs-extra": "^11.3.0",
+        "prettier": "^3.5.0",
+        "semantic-release": "^24.0.0",
+        "tsx": "^4.4.0",
+        "typescript": "~6.0.0"
+    },
+    "scripts": {
+        "start": "npm run start:dev",
+        "start:server": "tsx src/server.ts",
+        "start:prod": "node dist/main.js",
+        "start:server:prod": "node dist/server.js",
+        "start:dev": "tsx src/main.ts",
+        "build": "tsc",
+        "typecheck": "tsc --noEmit",
+        "format": "prettier --write 'src/**/*.ts'",
+        "format:check": "prettier --check 'src/**/*.ts'",
+        "test": "echo \"No tests yet — placeholder (CI green)\"",
+        "get-binaries": "camoufox-js fetch",
+        "postinstall": "npm run get-binaries"
+    },
+    "author": "ssrb",
+    "license": "MIT"
+}

@@ -1,0 +1,27 @@
+# Abhängigkeiten
+node_modules
+
+# Build-Output
+dist
+tsconfig.tsbuildinfo
+
+# Crawlee-Storage (Datasets, KV-Stores, Request-Queues)
+storage
+
+# Crawl-Ergebnisse
+gotthard_log.csv
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env (optional)
+.env
+.env.local
+
