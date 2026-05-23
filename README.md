@@ -1,7 +1,8 @@
 # Gotthard Traffic Crawler
 
-[![CI](https://github.com/ssrb/gotthard-traffic-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/ssrb/gotthard-traffic-crawler/actions/workflows/ci.yml)
-[![Release](https://github.com/ssrb/gotthard-traffic-crawler/actions/workflows/release.yml/badge.svg)](https://github.com/ssrb/gotthard-traffic-crawler/actions/workflows/release.yml)
+[![CI](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/ci.yml)
+[![Release](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/release.yml/badge.svg)](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/release.yml)
+[![PR Title](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/pr-title.yml/badge.svg)](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/pr-title.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Web Scraper für aktuelle Stauinformationen des Gotthard-Strassentunnels. Extrahiert Staulängen (km) und Wartezeiten (min) für Nord- und Südportal von [gotthard-traffic.ch](https://www.gotthard-traffic.ch/?lan=de).
@@ -19,17 +20,16 @@ Nutzt **Camoufox** (Firefox + Fingerprint-Spoofing) zur Umgehung des Cloudflare-
 
 ## Voraussetzungen
 
--   **Node.js 22+**
--   **npm 10+**
+-   **Bun 1.2+** ([bun.sh](https://bun.sh))
 -   **Playwright 1.58.2** (wird via Camoufox gebündelt)
 -   ~200 MB freier Speicher für Camoufox-Browser-Binaries
 
 ## Installation
 
 ```bash
-git clone https://github.com/ssrb/gotthard-traffic-crawler.git
+git clone https://github.com/stritti/gotthard-traffic-crawler.git
 cd gotthard-traffic-crawler
-npm install
+bun install
 ```
 
 Der `postinstall`-Hook lädt automatisch die Camoufox-Browser-Binaries herunter (~200 MB).
@@ -39,7 +39,7 @@ Der `postinstall`-Hook lädt automatisch die Camoufox-Browser-Binaries herunter 
 ### CLI-Modus (einmaliger Crawl + Cron)
 
 ```bash
-npm start
+bun start
 ```
 
 Startet einen sofortigen Crawl und richtet einen Cronjob für alle 15 Minuten ein.
@@ -47,7 +47,7 @@ Startet einen sofortigen Crawl und richtet einen Cronjob für alle 15 Minuten ei
 ### HTTP-Server (für n8n)
 
 ```bash
-npm run start:server
+bun run start:server
 ```
 
 Server läuft auf `http://localhost:3000`.
@@ -75,9 +75,9 @@ Server läuft auf `http://localhost:3000`.
 ### Produktion (vorkompiliert)
 
 ```bash
-npm run build
-npm run start:prod           # CLI
-npm run start:server:prod    # HTTP-Server
+bun run build
+bun run start:prod           # CLI
+bun run start:server:prod    # HTTP-Server
 ```
 
 ## Projektstruktur
@@ -94,7 +94,7 @@ dist/                 # tsc-Build-Output (gitignored)
 
 ## n8n-Integration
 
-1. **HTTP-Server starten**: `npm run start:server` (als Service/PM2/Systemd)
+1. **HTTP-Server starten**: `bun run start:server` (als Service/PM2/Systemd)
 2. **n8n-Workflow**: `HTTP Request`-Node → `GET http://dein-server:3000/crawl`
 3. **Daten nutzen**: `${json.data.nordportal_km}`, `${json.data.nordportal_min}`, etc.
 
@@ -111,32 +111,49 @@ Das Docker-Image basiert auf `apify/actor-node-playwright-camoufox:24-1.58.2` un
 
 ```bash
 # Formattierung prüfen
-npm run format:check
+bun run format:check
 
 # Formattierung anwenden
-npm run format
+bun run format
 
 # TypeScript-Check
-npm run typecheck
+bun run typecheck
 
 # Build
-npm run build
+bun run build
 ```
 
 ## Releases
 
 Dieses Projekt verwendet [**semantic-release**](https://semantic-release.gitbook.io/) für automatisierte Versionierung und GitHub-Releases.
 
-Commit-Nachrichten müssen dem **Conventional Commits**-Standard folgen:
+### PR-Titel-Validierung
 
-| Prefix | Release |
+Jeder Pull-Request-Titel wird automatisch gegen den **Conventional Commits**-Standard geprüft (Workflow `pr-title.yml`). PRs mit ungültigem Titel können nicht gemergt werden.
+
+### Commit-Konventionen → Version
+
+Commit-Nachrichten auf `main` steuern die automatische Versionierung:
+
+| Prefix | SemVer-Bump |
 |---|---|
-| `fix:` | Patch (1.0.x) |
-| `feat:` | Minor (1.x.0) |
-| `feat!:` oder `fix!:` | Major (x.0.0) |
-| `chore:`, `docs:`, `refactor:` | Kein Release |
+| `fix:` | Patch (1.0.**x**) |
+| `feat:` | Minor (1.**x**.0) |
+| `feat!:` oder `fix!:` (Breaking Change) | Major (**x**.0.0) |
+| `chore:`, `docs:`, `refactor:`, `ci:`, … | Kein Release |
 
-Nach einem Push auf `main` erstellt die GitHub Action automatisch einen Release. Der GIT_TOKEN wird automatisch von GitHub Actions bereitgestellt — kein manuelles Setup nötig.
+### Was bei einem Release passiert
+
+Nach einem Push auf `main` läuft die GitHub Action automatisch:
+
+1. Analysiert Commits seit dem letzten Tag
+2. Berechnet die neue Version (SemVer)
+3. Aktualisiert `CHANGELOG.md`
+4. Bumpt die Version in `package.json`
+5. Committet `CHANGELOG.md` + `package.json` zurück in `main` (`[skip ci]`)
+6. Erstellt einen GitHub Release + Git-Tag
+
+Der `GITHUB_TOKEN` wird automatisch von GitHub Actions bereitgestellt — kein manuelles Setup nötig.
 
 ## Lizenz
 

@@ -17,18 +17,18 @@ dist/             — tsc build output (gitignored)
 
 | Command | What it does |
 |---|---|
-| `npm start` | CLI: `tsx src/main.ts` (dev, one-shot + Cron) |
-| `npm run start:server` | HTTP-Server: `tsx src/server.ts` (n8n-kompatibel) |
-| `npm run start:prod` | CLI: `node dist/main.js` (nach build) |
-| `npm run start:server:prod` | HTTP-Server: `node dist/server.js` (nach build) |
-| `npm run build` | `tsc` — compiles `src/` → `dist/` |
-| `npm run typecheck` | `tsc --noEmit` — type-check only |
-| `npm run format` | Prettier — format `src/**/*.ts` |
-| `npm run format:check` | Prettier — check formatting |
-| `npm run get-binaries` | Downloads Camoufox browser binaries |
-| `npm test` | Stub — no tests yet |
+| `bun start` | CLI: `tsx src/main.ts` (dev, one-shot + Cron) |
+| `bun run start:server` | HTTP-Server: `tsx src/server.ts` (n8n-kompatibel) |
+| `bun run start:prod` | CLI: `node dist/main.js` (nach build) |
+| `bun run start:server:prod` | HTTP-Server: `node dist/server.js` (nach build) |
+| `bun run build` | `tsc` — compiles `src/` → `dist/` |
+| `bun run typecheck` | `tsc --noEmit` — type-check only |
+| `bun run format` | Prettier — format `src/**/*.ts` |
+| `bun run format:check` | Prettier — check formatting |
+| `bun run get-binaries` | Downloads Camoufox browser binaries |
+| `bun test` | Stub — no tests yet |
 
-`postinstall` auto-runs `get-binaries`. First `npm install` downloads ~200MB of Camoufox binaries.
+`postinstall` auto-runs `get-binaries`. First `bun install` downloads ~200MB of Camoufox binaries.
 
 ## ESM
 
@@ -66,11 +66,22 @@ proxyConfiguration: new ProxyConfiguration({ proxyUrls: ['...'] }),
 
 ## Testing
 
-No test suite exists. The `test` script is a placeholder:
+No test suite exists. The `test` script is a placeholder (exits 0 so CI stays green):
 
 ```
-echo "Error: oops, the actor has no tests yet, sad!" && exit 1
+echo "No tests yet — placeholder (CI green)"
 ```
+
+## Semantic Release pipeline
+
+Configured in `.releaserc.json`. Plugins run in order on push to `main`:
+
+1. `@semantic-release/commit-analyzer` — determines next SemVer from commits
+2. `@semantic-release/release-notes-generator` — builds release notes
+3. `@semantic-release/changelog` — writes/updates `CHANGELOG.md`
+4. `@semantic-release/npm` (`npmPublish: false`) — bumps `version` in `package.json`, no registry publish
+5. `@semantic-release/git` — commits `CHANGELOG.md` + `package.json` back to `main` with `[skip ci]`
+6. `@semantic-release/github` — creates GitHub Release + tag
 
 ## Docker
 
@@ -80,6 +91,7 @@ Multistage build using `apify/actor-node-playwright-camoufox:24-1.58.2`. Product
 
 - **Dependabot** configured in `.github/dependabot.yml` — weekly npm + GitHub Actions updates
 - **CI** in `.github/workflows/ci.yml` — formatting check + type check + tests on push/PR to main
+- **PR Title** in `.github/workflows/pr-title.yml` — validates PR title against Conventional Commits spec (`amannn/action-semantic-pull-request@v6`); Dependabot PRs (label `dependencies`) are exempt
 - **Release** in `.github/workflows/release.yml` — semantic-release on push to main
 
 ## Storage
