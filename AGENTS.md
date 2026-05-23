@@ -66,11 +66,22 @@ proxyConfiguration: new ProxyConfiguration({ proxyUrls: ['...'] }),
 
 ## Testing
 
-No test suite exists. The `test` script is a placeholder:
+No test suite exists. The `test` script is a placeholder (exits 0 so CI stays green):
 
 ```
-echo "Error: oops, the actor has no tests yet, sad!" && exit 1
+echo "No tests yet — placeholder (CI green)"
 ```
+
+## Semantic Release pipeline
+
+Configured in `.releaserc.json`. Plugins run in order on push to `main`:
+
+1. `@semantic-release/commit-analyzer` — determines next SemVer from commits
+2. `@semantic-release/release-notes-generator` — builds release notes
+3. `@semantic-release/changelog` — writes/updates `CHANGELOG.md`
+4. `@semantic-release/npm` (`npmPublish: false`) — bumps `version` in `package.json`, no registry publish
+5. `@semantic-release/git` — commits `CHANGELOG.md` + `package.json` back to `main` with `[skip ci]`
+6. `@semantic-release/github` — creates GitHub Release + tag
 
 ## Docker
 
@@ -80,6 +91,7 @@ Multistage build using `apify/actor-node-playwright-camoufox:24-1.58.2`. Product
 
 - **Dependabot** configured in `.github/dependabot.yml` — weekly npm + GitHub Actions updates
 - **CI** in `.github/workflows/ci.yml` — formatting check + type check + tests on push/PR to main
+- **PR Title** in `.github/workflows/pr-title.yml` — validates PR title against Conventional Commits spec (`amannn/action-semantic-pull-request@v6`); Dependabot PRs (label `dependencies`) are exempt
 - **Release** in `.github/workflows/release.yml` — semantic-release on push to main
 
 ## Storage

@@ -1,7 +1,8 @@
 # Gotthard Traffic Crawler
 
-[![CI](https://github.com/ssrb/gotthard-traffic-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/ssrb/gotthard-traffic-crawler/actions/workflows/ci.yml)
-[![Release](https://github.com/ssrb/gotthard-traffic-crawler/actions/workflows/release.yml/badge.svg)](https://github.com/ssrb/gotthard-traffic-crawler/actions/workflows/release.yml)
+[![CI](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/ci.yml)
+[![Release](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/release.yml/badge.svg)](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/release.yml)
+[![PR Title](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/pr-title.yml/badge.svg)](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/pr-title.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Web Scraper für aktuelle Stauinformationen des Gotthard-Strassentunnels. Extrahiert Staulängen (km) und Wartezeiten (min) für Nord- und Südportal von [gotthard-traffic.ch](https://www.gotthard-traffic.ch/?lan=de).
@@ -26,7 +27,7 @@ Nutzt **Camoufox** (Firefox + Fingerprint-Spoofing) zur Umgehung des Cloudflare-
 ## Installation
 
 ```bash
-git clone https://github.com/ssrb/gotthard-traffic-crawler.git
+git clone https://github.com/stritti/gotthard-traffic-crawler.git
 cd gotthard-traffic-crawler
 bun install
 ```
@@ -126,16 +127,33 @@ bun run build
 
 Dieses Projekt verwendet [**semantic-release**](https://semantic-release.gitbook.io/) für automatisierte Versionierung und GitHub-Releases.
 
-Commit-Nachrichten müssen dem **Conventional Commits**-Standard folgen:
+### PR-Titel-Validierung
 
-| Prefix | Release |
+Jeder Pull-Request-Titel wird automatisch gegen den **Conventional Commits**-Standard geprüft (Workflow `pr-title.yml`). PRs mit ungültigem Titel können nicht gemergt werden.
+
+### Commit-Konventionen → Version
+
+Commit-Nachrichten auf `main` steuern die automatische Versionierung:
+
+| Prefix | SemVer-Bump |
 |---|---|
-| `fix:` | Patch (1.0.x) |
-| `feat:` | Minor (1.x.0) |
-| `feat!:` oder `fix!:` | Major (x.0.0) |
-| `chore:`, `docs:`, `refactor:` | Kein Release |
+| `fix:` | Patch (1.0.**x**) |
+| `feat:` | Minor (1.**x**.0) |
+| `feat!:` oder `fix!:` (Breaking Change) | Major (**x**.0.0) |
+| `chore:`, `docs:`, `refactor:`, `ci:`, … | Kein Release |
 
-Nach einem Push auf `main` erstellt die GitHub Action automatisch einen Release. Der GIT_TOKEN wird automatisch von GitHub Actions bereitgestellt — kein manuelles Setup nötig.
+### Was bei einem Release passiert
+
+Nach einem Push auf `main` läuft die GitHub Action automatisch:
+
+1. Analysiert Commits seit dem letzten Tag
+2. Berechnet die neue Version (SemVer)
+3. Aktualisiert `CHANGELOG.md`
+4. Bumpt die Version in `package.json`
+5. Committet `CHANGELOG.md` + `package.json` zurück in `main` (`[skip ci]`)
+6. Erstellt einen GitHub Release + Git-Tag
+
+Der `GITHUB_TOKEN` wird automatisch von GitHub Actions bereitgestellt — kein manuelles Setup nötig.
 
 ## Lizenz
 
