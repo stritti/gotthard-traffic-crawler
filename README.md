@@ -1,7 +1,7 @@
 # Gotthard Traffic Crawler
 
-[![CI](https://github.com/ssrb/gotthard-traffic-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/ssrb/gotthard-traffic-crawler/actions/workflows/ci.yml)
-[![Release](https://github.com/ssrb/gotthard-traffic-crawler/actions/workflows/release.yml/badge.svg)](https://github.com/ssrb/gotthard-traffic-crawler/actions/workflows/release.yml)
+[![CI](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/ci.yml)
+[![Release](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/release.yml/badge.svg)](https://github.com/stritti/gotthard-traffic-crawler/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Web Scraper für aktuelle Stauinformationen des Gotthard-Strassentunnels. Extrahiert Staulängen (km) und Wartezeiten (min) für Nord- und Südportal von [gotthard-traffic.ch](https://www.gotthard-traffic.ch/?lan=de).
@@ -27,7 +27,7 @@ Nutzt **Camoufox** (Firefox + Fingerprint-Spoofing) zur Umgehung des Cloudflare-
 ## Installation
 
 ```bash
-git clone https://github.com/ssrb/gotthard-traffic-crawler.git
+git clone https://github.com/stritti/gotthard-traffic-crawler.git
 cd gotthard-traffic-crawler
 npm install
 ```
