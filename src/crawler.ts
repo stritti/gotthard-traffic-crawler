@@ -3,8 +3,8 @@ import { launchOptions as camoufoxOptions } from 'camoufox-js';
 import playwright from 'playwright';
 import fs from 'fs';
 
-// Log-Level auf INFO setzen für eine saubere Ausgabe
-log.setLevel(log.LEVELS.INFO);
+// Crawlee-interne Logs reduzieren — CLI hat eigenes Formatting
+log.setLevel(log.LEVELS.WARNING);
 
 const TARGET_URL = 'https://www.gotthard-traffic.ch/?lan=de';
 const LOG_FILE = 'gotthard_log.csv';

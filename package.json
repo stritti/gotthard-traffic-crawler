@@ -26,6 +26,7 @@
         "camoufox-js": "^0.9.0",
         "crawlee": "^3.0.0",
         "express": "^5.2.1",
+        "node-cron": "^4.2.1",
         "playwright": "1.58.2"
     },
     "devDependencies": {
@@ -34,6 +35,7 @@
         "@types/express": "^5.0.6",
         "@types/fs-extra": "^11",
         "@types/node": "^24.0.0",
+        "@types/node-cron": "^3.0.11",
         "fs-extra": "^11.3.0",
         "prettier": "^3.5.0",
         "semantic-release": "^24.0.0",
