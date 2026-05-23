@@ -3,42 +3,46 @@
 # You can also use any other image from Docker Hub.
 FROM apify/actor-node-playwright-camoufox:24-1.58.2 AS builder
 
+# Install bun
+RUN curl -fsSL https://bun.sh/install | bash
+ENV PATH="/root/.bun/bin:$PATH"
+
 # Copy package files first for Docker layer caching
-COPY --chown=myuser package*.json ./
+COPY --chown=myuser package.json bun.lock* ./
 
 # Install dependencies (including devDependencies for the build)
-RUN npm install --include=dev --audit=false --ignore-scripts
+RUN bun install --ignore-scripts
 
 # Copy source files
 COPY --chown=myuser . ./
 
 # Build TypeScript
-RUN npm run build
+RUN bun run build
 
 # Create final image
 FROM apify/actor-node-playwright-camoufox:24-1.58.2
 
+# Install bun
+RUN curl -fsSL https://bun.sh/install | bash
+ENV PATH="/root/.bun/bin:$PATH"
+
 # Copy only built JS files from builder image
 COPY --from=builder --chown=myuser /home/myuser/dist ./dist
 
-# Copy just package.json and package-lock.json
-# to speed up the build using Docker layer cache.
-COPY --chown=myuser package*.json ./
+# Copy package files for production install
+COPY --chown=myuser package.json bun.lock* ./
 
-# Install NPM packages, skip development dependencies to
-# keep the image small. Avoid logging too much and print the dependency
-# tree for debugging
-RUN npm --quiet set progress=false \
-    && npm install --omit=dev \
-    && echo "Installed NPM packages:" \
-    && (npm list --omit=dev --all || true) \
+# Install production dependencies only
+RUN bun install --production --ignore-scripts \
+    && echo "Installed packages:" \
+    && bun pm ls \
+    && echo "Bun version:" \
+    && bun --version \
     && echo "Node.js version:" \
-    && node --version \
-    && echo "NPM version:" \
-    && npm --version
+    && node --version
 
 # Copy the source files and directories.
 COPY --chown=myuser . ./
 
 # Run the image.
-CMD npm run start:prod
+CMD bun run start:prod

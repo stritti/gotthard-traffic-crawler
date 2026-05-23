@@ -19,8 +19,7 @@ Nutzt **Camoufox** (Firefox + Fingerprint-Spoofing) zur Umgehung des Cloudflare-
 
 ## Voraussetzungen
 
--   **Node.js 22+**
--   **npm 10+**
+-   **Bun 1.2+** ([bun.sh](https://bun.sh))
 -   **Playwright 1.58.2** (wird via Camoufox gebündelt)
 -   ~200 MB freier Speicher für Camoufox-Browser-Binaries
 
@@ -29,7 +28,7 @@ Nutzt **Camoufox** (Firefox + Fingerprint-Spoofing) zur Umgehung des Cloudflare-
 ```bash
 git clone https://github.com/ssrb/gotthard-traffic-crawler.git
 cd gotthard-traffic-crawler
-npm install
+bun install
 ```
 
 Der `postinstall`-Hook lädt automatisch die Camoufox-Browser-Binaries herunter (~200 MB).
@@ -39,7 +38,7 @@ Der `postinstall`-Hook lädt automatisch die Camoufox-Browser-Binaries herunter 
 ### CLI-Modus (einmaliger Crawl + Cron)
 
 ```bash
-npm start
+bun start
 ```
 
 Startet einen sofortigen Crawl und richtet einen Cronjob für alle 15 Minuten ein.
@@ -47,7 +46,7 @@ Startet einen sofortigen Crawl und richtet einen Cronjob für alle 15 Minuten ei
 ### HTTP-Server (für n8n)
 
 ```bash
-npm run start:server
+bun run start:server
 ```
 
 Server läuft auf `http://localhost:3000`.
@@ -75,9 +74,9 @@ Server läuft auf `http://localhost:3000`.
 ### Produktion (vorkompiliert)
 
 ```bash
-npm run build
-npm run start:prod           # CLI
-npm run start:server:prod    # HTTP-Server
+bun run build
+bun run start:prod           # CLI
+bun run start:server:prod    # HTTP-Server
 ```
 
 ## Projektstruktur
@@ -94,7 +93,7 @@ dist/                 # tsc-Build-Output (gitignored)
 
 ## n8n-Integration
 
-1. **HTTP-Server starten**: `npm run start:server` (als Service/PM2/Systemd)
+1. **HTTP-Server starten**: `bun run start:server` (als Service/PM2/Systemd)
 2. **n8n-Workflow**: `HTTP Request`-Node → `GET http://dein-server:3000/crawl`
 3. **Daten nutzen**: `${json.data.nordportal_km}`, `${json.data.nordportal_min}`, etc.
 
@@ -111,16 +110,16 @@ Das Docker-Image basiert auf `apify/actor-node-playwright-camoufox:24-1.58.2` un
 
 ```bash
 # Formattierung prüfen
-npm run format:check
+bun run format:check
 
 # Formattierung anwenden
-npm run format
+bun run format
 
 # TypeScript-Check
-npm run typecheck
+bun run typecheck
 
 # Build
-npm run build
+bun run build
 ```
 
 ## Releases

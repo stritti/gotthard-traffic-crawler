@@ -17,18 +17,18 @@ dist/             — tsc build output (gitignored)
 
 | Command | What it does |
 |---|---|
-| `npm start` | CLI: `tsx src/main.ts` (dev, one-shot + Cron) |
-| `npm run start:server` | HTTP-Server: `tsx src/server.ts` (n8n-kompatibel) |
-| `npm run start:prod` | CLI: `node dist/main.js` (nach build) |
-| `npm run start:server:prod` | HTTP-Server: `node dist/server.js` (nach build) |
-| `npm run build` | `tsc` — compiles `src/` → `dist/` |
-| `npm run typecheck` | `tsc --noEmit` — type-check only |
-| `npm run format` | Prettier — format `src/**/*.ts` |
-| `npm run format:check` | Prettier — check formatting |
-| `npm run get-binaries` | Downloads Camoufox browser binaries |
-| `npm test` | Stub — no tests yet |
+| `bun start` | CLI: `tsx src/main.ts` (dev, one-shot + Cron) |
+| `bun run start:server` | HTTP-Server: `tsx src/server.ts` (n8n-kompatibel) |
+| `bun run start:prod` | CLI: `node dist/main.js` (nach build) |
+| `bun run start:server:prod` | HTTP-Server: `node dist/server.js` (nach build) |
+| `bun run build` | `tsc` — compiles `src/` → `dist/` |
+| `bun run typecheck` | `tsc --noEmit` — type-check only |
+| `bun run format` | Prettier — format `src/**/*.ts` |
+| `bun run format:check` | Prettier — check formatting |
+| `bun run get-binaries` | Downloads Camoufox browser binaries |
+| `bun test` | Stub — no tests yet |
 
-`postinstall` auto-runs `get-binaries`. First `npm install` downloads ~200MB of Camoufox binaries.
+`postinstall` auto-runs `get-binaries`. First `bun install` downloads ~200MB of Camoufox binaries.
 
 ## ESM
 
