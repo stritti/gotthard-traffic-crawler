@@ -31,7 +31,7 @@
     },
     "devDependencies": {
         "@apify/tsconfig": "^0.1.0",
-        "@semantic-release/github": "^11.0.0",
+        "@semantic-release/github": "^12.0.8",
         "@types/express": "^5.0.6",
         "@types/fs-extra": "^11",
         "@types/node": "^24.0.0",
