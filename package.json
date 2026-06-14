@@ -13,13 +13,13 @@
         "scraper",
         "n8n"
     ],
-    "homepage": "https://github.com/ssrb/gotthard-traffic-crawler",
+    "homepage": "https://github.com/stritti/gotthard-traffic-crawler",
     "bugs": {
-        "url": "https://github.com/ssrb/gotthard-traffic-crawler/issues"
+        "url": "https://github.com/stritti/gotthard-traffic-crawler/issues"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ssrb/gotthard-traffic-crawler.git"
+        "url": "git+https://github.com/stritti/gotthard-traffic-crawler.git"
     },
     "dependencies": {
         "@crawlee/impit-client": "^3.0.0",

@@ -3,8 +3,8 @@ import { launchOptions as camoufoxOptions } from 'camoufox-js';
 import playwright from 'playwright';
 import fs from 'fs';
 
-// Log-Level auf INFO setzen für eine saubere Ausgabe
-log.setLevel(log.LEVELS.INFO);
+// Crawlee-interne Logs reduzieren — CLI hat eigenes Formatting
+log.setLevel(log.LEVELS.WARNING);
 
 const TARGET_URL = 'https://www.gotthard-traffic.ch/?lan=de';
 const LOG_FILE = 'gotthard_log.csv';
@@ -32,8 +32,9 @@ export async function scrapeGotthard(): Promise<CrawlResult> {
     log.info('Starte Gotthard-Traffic Crawler...');
     initCsv();
 
-    // Shared-Variable: requestHandler schreibt hier rein
+    // Shared-Variablen: requestHandler schreibt hier rein
     let result: CrawlResult | undefined;
+    let portalDataFound = false;
 
     // Camoufox-Launch-Options (Firefox-Fingerprint-Spoofing gegen Cloudflare)
     const cfLaunchOpts = await camoufoxOptions({
@@ -102,6 +103,8 @@ export async function scrapeGotthard(): Promise<CrawlResult> {
             const nord = extractValues(nordBlock);
             const sued = extractValues(suedBlock);
 
+            portalDataFound = true; // data-id="north-portal" wurde im DOM gefunden
+
             result = {
                 timestamp: new Date().toISOString(),
                 nordportal_km: nord.km,
@@ -130,13 +133,12 @@ export async function scrapeGotthard(): Promise<CrawlResult> {
     await crawler.run([TARGET_URL]);
     log.info('Crawler-Durchlauf beendet.');
 
-    return (
-        result ?? {
-            timestamp: new Date().toISOString(),
-            nordportal_km: '0',
-            nordportal_min: '0',
-            suedportal_km: '0',
-            suedportal_min: '0',
-        }
-    );
+    if (!result || !portalDataFound) {
+        throw new Error(
+            'Crawl fehlgeschlagen: keine Portal-Daten gefunden ' +
+                '(data-id="north-portal" fehlt im DOM — Cloudflare-Block oder AJAX nicht geladen)',
+        );
+    }
+
+    return result;
 }
