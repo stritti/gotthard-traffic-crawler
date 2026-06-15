@@ -10,9 +10,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  NODE_VERSION: "22"
-
 jobs:
   quality:
     name: Quality Check
@@ -21,22 +18,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: bun install --ignore-scripts
         # --ignore-scripts: Camoufox-Binaries (200MB) nur bei Bedarf
 
       - name: Check formatting
-        run: npx prettier --check "src/**/*.ts"
+        run: bunx prettier --check "src/**/*.ts"
 
       - name: Type check
-        run: npm run build
+        run: bun run build
 
       - name: Run tests
-        run: npm test
+        run: bun run test
         # Placeholder — wird grün, sobald Tests existieren
