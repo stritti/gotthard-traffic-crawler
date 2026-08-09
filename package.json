@@ -42,7 +42,7 @@
         "prettier": "^3.9.6",
         "semantic-release": "^25.0.8",
         "tsx": "^4.23.1",
-        "typescript": "~6.0.0"
+        "typescript": "~7.0.2"
     },
     "scripts": {
         "start": "npm run start:dev",
