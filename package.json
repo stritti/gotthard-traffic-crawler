@@ -22,9 +22,9 @@
         "url": "git+https://github.com/stritti/gotthard-traffic-crawler.git"
     },
     "dependencies": {
-        "@crawlee/impit-client": "^3.17.0",
+        "@crawlee/impit-client": "^3.18.0",
         "camoufox-js": "^0.12.0",
-        "crawlee": "^3.17.0",
+        "crawlee": "^3.18.0",
         "express": "^5.2.1",
         "node-cron": "^4.6.0",
         "playwright": "1.62.1"
