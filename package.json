@@ -31,7 +31,7 @@
     },
     "devDependencies": {
         "@apify/tsconfig": "^0.2.0",
-        "@semantic-release/changelog": "^6.0.3",
+        "@semantic-release/changelog": "^7.0.0",
         "@semantic-release/git": "^11.0.1",
         "@semantic-release/github": "^12.0.9",
         "@types/express": "^5.0.6",
